@@ -114,7 +114,7 @@ export default function ProductList() {
                       </div>
                     </div>
                   </td>
-                  <td>
+                  <td className="whitespace-nowrap">
                     <div className="font-semibold text-primary-600">{formatMoney(p.price)}</div>
                     {p.originPrice && <div className="text-xs text-gray-400 line-through">{formatMoney(p.originPrice)}</div>}
                   </td>

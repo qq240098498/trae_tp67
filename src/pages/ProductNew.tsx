@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import { ArrowLeft, Upload, Calendar, Clock, Package, DollarSign, Tag, Image, Sparkles } from 'lucide-react';
+import { formatMoney } from '@/lib/format';
+
+const PRICE_MAX = 9999999.99;
 
 const SAMPLE_IMGS = [
   'https://images.unsplash.com/photo-1610832958506-aa16e062fc59?w=400&h=400&fit=crop',
@@ -44,7 +47,14 @@ export default function ProductNew() {
   const submit = async () => {
     if (!form.name.trim()) return showToast('error', '请输入团品名称');
     if (!form.spec.trim()) return showToast('error', '请输入规格');
-    if (!form.price || Number(form.price) <= 0) return showToast('error', '请输入有效团购价');
+    const priceNum = Number(form.price);
+    if (!form.price || isNaN(priceNum) || priceNum <= 0) return showToast('error', '请输入有效团购价');
+    if (priceNum > PRICE_MAX) return showToast('error', `团购价不能超过 ${formatMoney(PRICE_MAX)} 元`);
+    if (form.originPrice) {
+      const originNum = Number(form.originPrice);
+      if (isNaN(originNum) || originNum <= 0) return showToast('error', '原价需为有效正数');
+      if (originNum > PRICE_MAX) return showToast('error', `原价不能超过 ${formatMoney(PRICE_MAX)} 元`);
+    }
     if (!form.deadline) return showToast('error', '请选择截团时间');
     if (!form.arriveDate) return showToast('error', '请选择预计到货日');
     try {
@@ -96,11 +106,11 @@ export default function ProductNew() {
               </div>
               <div>
                 <label className="label"><DollarSign size={14} className="inline mr-1.5 -mt-0.5 text-primary-500" /> 团购价 (元) *</label>
-                <input type="number" step="0.01" min="0" className="input h-11 text-lg font-semibold text-primary-600" placeholder="29.90" value={form.price} onChange={e => set('price', e.target.value)} />
+                <input type="number" step="0.01" min="0" max={PRICE_MAX} className="input h-11 text-lg font-semibold text-primary-600" placeholder="29.90" value={form.price} onChange={e => set('price', e.target.value)} />
               </div>
               <div>
                 <label className="label">原价/建议零售价 (元)</label>
-                <input type="number" step="0.01" min="0" className="input h-11 text-gray-500" placeholder="49.90" value={form.originPrice} onChange={e => set('originPrice', e.target.value)} />
+                <input type="number" step="0.01" min="0" max={PRICE_MAX} className="input h-11 text-gray-500" placeholder="49.90" value={form.originPrice} onChange={e => set('originPrice', e.target.value)} />
               </div>
               <div>
                 <label className="label">库存数量</label>
@@ -179,8 +189,8 @@ export default function ProductNew() {
                 <div className="text-xs text-gray-400 mt-1 line-clamp-1">{form.spec || '规格描述'}</div>
                 <div className="flex items-end justify-between mt-3">
                   <div>
-                    <span className="text-xl font-bold text-primary-600">¥{form.price || '0.00'}</span>
-                    {form.originPrice && <span className="text-xs text-gray-400 line-through ml-1.5">¥{form.originPrice}</span>}
+                    <span className="text-xl font-bold text-primary-600">{formatMoney(Number(form.price) || 0)}</span>
+                    {form.originPrice && <span className="text-xs text-gray-400 line-through ml-1.5">{formatMoney(Number(form.originPrice))}</span>}
                   </div>
                   <span className="tag bg-fresh-50 text-fresh-600 border-fresh-200">
                     {form.source === 'supply' ? '供应链' : '自定义'}

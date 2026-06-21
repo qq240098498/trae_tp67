@@ -1,6 +1,19 @@
 export const formatMoney = (n: number | null | undefined) => {
-  if (n === null || n === undefined || isNaN(n)) return '¥0.00';
-  return '¥' + Number(n).toFixed(2);
+  if (n === null || n === undefined || isNaN(n) || !isFinite(n)) return '¥0.00';
+  const num = Number(n);
+  const sign = num < 0 ? '-' : '';
+  const abs = Math.abs(num);
+  const cents = Math.round(abs * 100);
+  const intPart = Math.floor(cents / 100);
+  const decPart = cents % 100;
+  let intStr: string;
+  if (intPart > 1e15) {
+    intStr = intPart.toLocaleString('en-US');
+  } else {
+    intStr = intPart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  const decStr = String(decPart).padStart(2, '0');
+  return '¥' + sign + intStr + '.' + decStr;
 };
 
 export const formatDate = (iso?: string, withTime = true) => {
