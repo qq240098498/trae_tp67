@@ -1,7 +1,8 @@
 import axios from 'axios';
 import type {
   Product, Order, SortingGroup, MemberSorting, Aftersale,
-  DashboardStats, ProductStats, MemberStats, VerificationRecord
+  DashboardStats, ProductStats, MemberStats, VerificationRecord,
+  PickupReminder, OverduePickupStats
 } from '../../shared/types';
 
 const http = axios.create({ baseURL: '/api', timeout: 10000 });
@@ -58,6 +59,19 @@ export const api = {
     get: (id: string) => http.get<any, { code: number; data: { aftersale: Aftersale; order: Order } }>(`/aftersale/${id}`).then(r => r.data),
     updateStatus: (id: string, status: Aftersale['status']) =>
       http.patch<any, { code: number; data: Aftersale }>(`/aftersale/${id}/status`, { status }).then(r => r),
+  },
+  pickupReminder: {
+    stats: () => http.get<any, { code: number; data: OverduePickupStats }>('/pickup-reminder/stats').then(r => r.data),
+    orders: (params?: { type?: string; keyword?: string }) =>
+      http.get<any, { code: number; data: any[] }>('/pickup-reminder/orders', { params }).then(r => r.data),
+    remind: (orderId: string) =>
+      http.post<any, { code: number; data: any; message?: string }>(`/pickup-reminder/remind/${orderId}`).then(r => r),
+    remindBatch: (orderIds: string[]) =>
+      http.post<any, { code: number; data: { success: number; failed: number }; message?: string }>('/pickup-reminder/remind/batch', { orderIds }).then(r => r),
+    dispose: (orderId: string, type: 'stored' | 'returned' | 'normal', remark?: string) =>
+      http.post<any, { code: number; data: Order; message?: string }>(`/pickup-reminder/dispose/${orderId}`, { type, remark }).then(r => r),
+    reminders: (params?: { orderId?: string }) =>
+      http.get<any, { code: number; data: PickupReminder[] }>('/pickup-reminder/reminders', { params }).then(r => r.data),
   },
 };
 

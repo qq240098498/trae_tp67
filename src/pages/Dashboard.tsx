@@ -5,7 +5,7 @@ import { formatMoney } from '@/lib/format';
 import {
   Package, ShoppingCart, Boxes, Headphones, CalendarCheck,
   TrendingUp, Users, DollarSign, ShoppingBag, AlertTriangle, ArrowRight,
-  PackagePlus, ScanLine, RefreshCw
+  PackagePlus, ScanLine, RefreshCw, Clock
 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart
@@ -25,6 +25,7 @@ const TODO_ICON: Record<string, any> = {
   deadline: AlertTriangle,
   arrive: ShoppingBag,
   info: TrendingUp,
+  overdue: Clock,
 };
 
 export default function Dashboard() {

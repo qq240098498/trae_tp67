@@ -4,6 +4,8 @@ export type OrderStatus = 'pending' | 'sorted' | 'picked' | 'refunded';
 export type SortingStatus = 'pending' | 'sorting' | 'done';
 export type AftersaleType = 'out_of_stock' | 'damaged' | 'quality';
 export type AftersaleStatus = 'pending' | 'approved' | 'completed';
+export type PickupReminderLevel = 0 | 1 | 2;
+export type PickupDisposeType = 'normal' | 'stored' | 'returned';
 
 export interface Product {
   id: string;
@@ -46,6 +48,11 @@ export interface Order {
   status: OrderStatus;
   createdAt: string;
   pickedAt?: string;
+  reminderLevel: PickupReminderLevel;
+  lastRemindedAt?: string;
+  disposeType: PickupDisposeType;
+  disposedAt?: string;
+  disposeRemark?: string;
 }
 
 export interface SortingGroup {
@@ -94,6 +101,25 @@ export interface VerificationRecord {
   verifiedAt: string;
 }
 
+export interface PickupReminder {
+  id: string;
+  orderId: string;
+  orderNo: string;
+  memberName: string;
+  memberPhone: string;
+  level: PickupReminderLevel;
+  content: string;
+  createdAt: string;
+}
+
+export interface OverduePickupStats {
+  total: number;
+  level1: number;
+  level2: number;
+  stored: number;
+  returned: number;
+}
+
 export interface DashboardStats {
   ongoingGroups: number;
   pendingPickup: number;
@@ -103,6 +129,7 @@ export interface DashboardStats {
   todayAmount: number;
   weekTrend: { date: string; orders: number; amount: number }[];
   todos: { type: string; content: string; time?: string }[];
+  overduePickup: OverduePickupStats;
 }
 
 export interface ProductStats {

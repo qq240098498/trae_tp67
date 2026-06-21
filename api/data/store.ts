@@ -1,5 +1,5 @@
-import type { Product, Order, SortingGroup, Aftersale, VerificationRecord } from '../../shared/types';
-import { seedProducts, seedOrders, seedSortingGroups, seedAftersales } from './seed';
+import type { Product, Order, SortingGroup, Aftersale, VerificationRecord, PickupReminder } from '../../shared/types';
+import { seedProducts, seedOrders, seedSortingGroups, seedAftersales, seedPickupReminders } from './seed';
 
 class MemoryStore {
   products: Product[] = [];
@@ -7,6 +7,7 @@ class MemoryStore {
   sortingGroups: SortingGroup[] = [];
   aftersales: Aftersale[] = [];
   verifications: VerificationRecord[] = [];
+  pickupReminders: PickupReminder[] = [];
 
   constructor() {
     this.init();
@@ -27,6 +28,7 @@ class MemoryStore {
         pickupCode: o.pickupCode,
         verifiedAt: o.pickedAt!,
       }));
+    this.pickupReminders = seedPickupReminders(this.orders);
   }
 
   genId(prefix: string) {

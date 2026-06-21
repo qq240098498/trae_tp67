@@ -48,6 +48,18 @@ export const statusText: Record<string, { text: string; className: string }> = {
   completed: { text: '已完成', className: 'bg-fresh-50 text-fresh-600 border-fresh-200' },
 };
 
+export const disposeTypeText: Record<string, { text: string; className: string }> = {
+  normal: { text: '待取货', className: 'bg-primary-50 text-primary-600 border-primary-200' },
+  stored: { text: '代存', className: 'bg-amber-50 text-amber-600 border-amber-200' },
+  returned: { text: '退货', className: 'bg-red-50 text-red-600 border-red-200' },
+};
+
+export const reminderLevelText: Record<number, { text: string; className: string }> = {
+  0: { text: '未提醒', className: 'bg-gray-50 text-gray-500 border-gray-200' },
+  1: { text: '已提醒1次', className: 'bg-amber-50 text-amber-600 border-amber-200' },
+  2: { text: '已提醒2次', className: 'bg-red-50 text-red-600 border-red-200' },
+};
+
 export const aftersaleTypeText: Record<string, { text: string; className: string }> = {
   out_of_stock: { text: '缺货退款', className: 'bg-primary-50 text-primary-600 border-primary-200' },
   damaged: { text: '破损退款', className: 'bg-red-50 text-red-600 border-red-200' },

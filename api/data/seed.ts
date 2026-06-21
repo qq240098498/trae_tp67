@@ -1,4 +1,4 @@
-import type { Product, Order, OrderItem, SortingGroup, Aftersale } from '../../shared/types';
+import type { Product, Order, OrderItem, SortingGroup, Aftersale, PickupReminder } from '../../shared/types';
 
 const daysFromNow = (n: number, h = 12, m = 0) => {
   const d = new Date();
@@ -77,7 +77,7 @@ export function seedOrders(): Order[] {
   const pmap = Object.fromEntries(products.map(p => [p.id, p]));
 
   let idx = 1;
-  const add = (groupId: string, productIds: string[], status: Order['status'], createdAt: string) => {
+  const add = (groupId: string, productIds: string[], status: Order['status'], createdAt: string, options?: { reminderLevel?: 0|1|2; disposeType?: 'normal'|'stored'|'returned'; lastRemindedAt?: string; disposedAt?: string }) => {
     const member = pickMember();
     const items: OrderItem[] = productIds.map(pid => {
       const p = pmap[pid]!;
@@ -104,6 +104,10 @@ export function seedOrders(): Order[] {
       status,
       createdAt,
       pickedAt: status === 'picked' ? new Date(new Date(createdAt).getTime() + rand(3600, 86400) * 1000).toISOString() : undefined,
+      reminderLevel: options?.reminderLevel ?? 0,
+      lastRemindedAt: options?.lastRemindedAt,
+      disposeType: options?.disposeType ?? 'normal',
+      disposedAt: options?.disposedAt,
     });
     idx++;
   };
@@ -118,17 +122,61 @@ export function seedOrders(): Order[] {
     const s: Order['status'] = i < 6 ? 'picked' : 'sorted';
     add('g2', ['p5'], s, GROUPS[1].closedAt);
   }
-  // Group g3 (p6 生蚝) - done, 12 orders all picked
+  // Group g3 (p6 生蚝) - done, 12 orders (8 picked, 4 overdue sorted)
   for (let i = 0; i < 12; i++) {
-    add('g3', ['p6'], 'picked', GROUPS[2].closedAt);
+    if (i < 8) {
+      add('g3', ['p6'], 'picked', GROUPS[2].closedAt);
+    } else if (i < 10) {
+      add('g3', ['p6'], 'sorted', GROUPS[2].closedAt, { 
+        reminderLevel: 2, 
+        lastRemindedAt: daysAgo(0, 10),
+        disposeType: 'normal'
+      });
+    } else {
+      add('g3', ['p6'], 'sorted', GROUPS[2].closedAt, { 
+        reminderLevel: 1, 
+        lastRemindedAt: daysAgo(1, 14),
+        disposeType: 'normal'
+      });
+    }
   }
-  // Group g4 (p10 砂糖橘) - done, 20 orders
+  // Group g4 (p10 砂糖橘) - done, 20 orders (15 picked, 3 stored, 2 returned)
   for (let i = 0; i < 20; i++) {
-    add('g4', ['p10'], 'picked', GROUPS[3].closedAt);
+    if (i < 15) {
+      add('g4', ['p10'], 'picked', GROUPS[3].closedAt);
+    } else if (i < 18) {
+      add('g4', ['p10'], 'sorted', GROUPS[3].closedAt, { 
+        reminderLevel: 2, 
+        lastRemindedAt: daysAgo(3, 9),
+        disposeType: 'stored',
+        disposedAt: daysAgo(2, 11)
+      });
+    } else {
+      add('g4', ['p10'], 'sorted', GROUPS[3].closedAt, { 
+        reminderLevel: 2, 
+        lastRemindedAt: daysAgo(4, 10),
+        disposeType: 'returned',
+        disposedAt: daysAgo(3, 15)
+      });
+    }
   }
-  // Group g5 (p8 大闸蟹) - done, 8 orders
+  // Group g5 (p8 大闸蟹) - done, 8 orders (5 picked, 3 overdue)
   for (let i = 0; i < 8; i++) {
-    add('g5', ['p8'], 'picked', GROUPS[4].closedAt);
+    if (i < 5) {
+      add('g5', ['p8'], 'picked', GROUPS[4].closedAt);
+    } else if (i < 7) {
+      add('g5', ['p8'], 'sorted', GROUPS[4].closedAt, { 
+        reminderLevel: 2, 
+        lastRemindedAt: daysAgo(2, 8),
+        disposeType: 'normal'
+      });
+    } else {
+      add('g5', ['p8'], 'sorted', GROUPS[4].closedAt, { 
+        reminderLevel: 1, 
+        lastRemindedAt: daysAgo(1, 16),
+        disposeType: 'normal'
+      });
+    }
   }
 
   return orders;
@@ -163,4 +211,43 @@ export function seedAftersales(orders: Order[]): Aftersale[] {
     { id: 'as6', orderId: picked[11].id, orderNo: picked[11].orderNo, memberName: picked[11].memberName, type: 'out_of_stock', refundAmount: 89.9, remark: '羊肉卷断货，尚未到货，先退款', productName: '内蒙古羔羊肉卷', status: 'approved', createdAt: daysAgo(1, 17) },
   ];
   return list;
+}
+
+export function seedPickupReminders(orders: Order[]): PickupReminder[] {
+  const sortedOrders = orders.filter(o => o.status === 'sorted' && o.disposeType === 'normal');
+  const reminders: PickupReminder[] = [];
+  let rid = 1;
+  
+  for (const o of sortedOrders) {
+    if (o.reminderLevel >= 1) {
+      const remindTime = o.lastRemindedAt 
+        ? new Date(new Date(o.lastRemindedAt).getTime() - 24 * 3600 * 1000).toISOString()
+        : daysAgo(2, 10);
+      reminders.push({
+        id: 'pr_' + rid++,
+        orderId: o.id,
+        orderNo: o.orderNo,
+        memberName: o.memberName,
+        memberPhone: o.memberPhone,
+        level: 1,
+        content: `您订购的商品已到货24小时，请尽快到团长处取货，取货码：${o.pickupCode}`,
+        createdAt: remindTime,
+      });
+    }
+    if (o.reminderLevel >= 2 && o.lastRemindedAt) {
+      reminders.push({
+        id: 'pr_' + rid++,
+        orderId: o.id,
+        orderNo: o.orderNo,
+        memberName: o.memberName,
+        memberPhone: o.memberPhone,
+        level: 2,
+        content: `温馨提醒：您的订单已到货48小时仍未取货，请尽快取货或联系团长处理，取货码：${o.pickupCode}`,
+        createdAt: o.lastRemindedAt,
+      });
+    }
+  }
+  
+  reminders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  return reminders;
 }

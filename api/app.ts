@@ -13,6 +13,7 @@ import ordersRoutes from './routes/orders.js'
 import sortingRoutes from './routes/sorting.js'
 import verificationRoutes from './routes/verification.js'
 import aftersaleRoutes from './routes/aftersale.js'
+import pickupReminderRoutes from './routes/pickupReminder.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -31,6 +32,7 @@ app.use('/api/orders', ordersRoutes)
 app.use('/api/sorting', sortingRoutes)
 app.use('/api/verification', verificationRoutes)
 app.use('/api/aftersale', aftersaleRoutes)
+app.use('/api/pickup-reminder', pickupReminderRoutes)
 
 app.use(
   '/api/health',

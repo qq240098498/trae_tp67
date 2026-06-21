@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Package, BarChart3, Boxes, ScanLine, Headphones, Plus, ShoppingBasket,
-  Bell, Search, User, ChevronRight
+  Bell, Search, User, ChevronRight, Clock
 } from 'lucide-react';
 import { useMemo, ReactNode } from 'react';
 
@@ -13,6 +13,7 @@ const NAV = [
   { to: '/orders', label: '下单统计', icon: BarChart3 },
   { to: '/sorting', label: '到货分拣', icon: Boxes },
   { to: '/verification', label: '取货核销', icon: ScanLine },
+  { to: '/pickup-reminder', label: '超时催收', icon: Clock },
   { to: '/aftersale', label: '售后登记', icon: Headphones },
 ];
 
@@ -24,6 +25,7 @@ const BREAD_CRUMB: Record<string, string[]> = {
   '/orders': ['下单统计'],
   '/sorting': ['到货分拣', '分拣单列表'],
   '/verification': ['取货核销'],
+  '/pickup-reminder': ['超时催收'],
   '/aftersale': ['售后登记', '售后列表'],
   '/aftersale/new': ['售后登记', '新建售后'],
 };

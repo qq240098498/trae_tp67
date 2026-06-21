@@ -11,6 +11,7 @@ import SortingDetail from "@/pages/SortingDetail";
 import Verification from "@/pages/Verification";
 import AftersaleList from "@/pages/AftersaleList";
 import AftersaleNew from "@/pages/AftersaleNew";
+import PickupReminder from "@/pages/PickupReminder";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/verification" element={<Verification />} />
           <Route path="/aftersale" element={<AftersaleList />} />
           <Route path="/aftersale/new" element={<AftersaleNew />} />
+          <Route path="/pickup-reminder" element={<PickupReminder />} />
           <Route path="*" element={<Dashboard />} />
         </Routes>
       </AppLayout>
