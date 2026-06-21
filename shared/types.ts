@@ -35,6 +35,8 @@ export interface Order {
   orderNo: string;
   memberName: string;
   memberPhone: string;
+  building: string;
+  roomNumber: string;
   pickupCode: string;
   items: OrderItem[];
   totalAmount: number;
@@ -62,6 +64,8 @@ export interface MemberSorting {
   orderId: string;
   memberName: string;
   memberPhone: string;
+  building: string;
+  roomNumber: string;
   pickupCode: string;
   items: OrderItem[];
   totalAmount: number;

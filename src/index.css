@@ -86,7 +86,9 @@ body {
   body { background: white !important; }
   .no-print { display: none !important; }
   .print-only { display: block !important; }
-  .print-area {
+  .print-sorting-only { display: block !important; }
+  .print-area,
+  .print-sorting-area {
     position: static !important;
     width: 100% !important;
     margin: 0 !important;
@@ -95,3 +97,4 @@ body {
   @page { size: A4; margin: 10mm; }
 }
 .print-only { display: none; }
+.print-sorting-only { display: none; }

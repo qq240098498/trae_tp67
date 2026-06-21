@@ -38,16 +38,21 @@ export function seedProducts(): Product[] {
 }
 
 const MEMBERS = [
-  { name: '张丽华', phone: '138****1234' },
-  { name: '李明强', phone: '139****5678' },
-  { name: '王晓丽', phone: '136****9012' },
-  { name: '赵文博', phone: '137****3456' },
-  { name: '陈美玲', phone: '135****7890' },
-  { name: '刘建国', phone: '138****2345' },
-  { name: '周小红', phone: '139****6789' },
-  { name: '吴海涛', phone: '136****0123' },
-  { name: '孙雪梅', phone: '137****4567' },
-  { name: '郑志强', phone: '135****8901' },
+  { name: '张丽华', phone: '138****1234', building: '1栋', roomNumber: '302' },
+  { name: '李明强', phone: '139****5678', building: '2栋', roomNumber: '1501' },
+  { name: '王晓丽', phone: '136****9012', building: '1栋', roomNumber: '805' },
+  { name: '赵文博', phone: '137****3456', building: '3栋', roomNumber: '602' },
+  { name: '陈美玲', phone: '135****7890', building: '2栋', roomNumber: '403' },
+  { name: '刘建国', phone: '138****2345', building: '5栋', roomNumber: '1102' },
+  { name: '周小红', phone: '139****6789', building: '1栋', roomNumber: '1201' },
+  { name: '吴海涛', phone: '136****0123', building: '4栋', roomNumber: '708' },
+  { name: '孙雪梅', phone: '137****4567', building: '3栋', roomNumber: '2203' },
+  { name: '郑志强', phone: '135****8901', building: '5栋', roomNumber: '901' },
+  { name: '黄丽娟', phone: '137****1122', building: '2栋', roomNumber: '1806' },
+  { name: '杨伟东', phone: '136****3344', building: '4栋', roomNumber: '305' },
+  { name: '林小芳', phone: '138****5566', building: '1栋', roomNumber: '509' },
+  { name: '何志远', phone: '139****7788', building: '3栋', roomNumber: '1402' },
+  { name: '徐美玲', phone: '135****9900', building: '5栋', roomNumber: '606' },
 ];
 
 function pickMember() {
@@ -88,6 +93,8 @@ export function seedOrders(): Order[] {
       orderNo: 'TG' + s1 + String(1000 + idx).padStart(4, '0'),
       memberName: member.name,
       memberPhone: member.phone,
+      building: member.building,
+      roomNumber: member.roomNumber,
       pickupCode: pc(),
       items,
       totalAmount: total,

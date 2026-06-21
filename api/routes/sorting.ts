@@ -12,6 +12,15 @@ router.get('/', (req: Request, res: Response) => {
   res.json({ code: 0, data: list });
 });
 
+const parseBuildingNum = (b: string) => {
+  const m = b.match(/(\d+)/);
+  return m ? parseInt(m[1], 10) : 999;
+};
+const parseRoomNum = (r: string) => {
+  const n = parseInt(r, 10);
+  return isNaN(n) ? 9999 : n;
+};
+
 router.get('/:id', (req: Request, res: Response) => {
   const g = store.sortingGroups.find(x => x.id === req.params.id);
   if (!g) return res.status(404).json({ code: 1, message: '分拣单不存在' });
@@ -21,12 +30,18 @@ router.get('/:id', (req: Request, res: Response) => {
       orderId: o.id,
       memberName: o.memberName,
       memberPhone: o.memberPhone,
+      building: o.building,
+      roomNumber: o.roomNumber,
       pickupCode: o.pickupCode,
       items: o.items,
       totalAmount: o.totalAmount,
       isSorted: o.status === 'sorted' || o.status === 'picked',
     }));
-  members.sort((a, b) => a.memberName.localeCompare(b.memberName, 'zh-CN'));
+  members.sort((a, b) => {
+    const bd = parseBuildingNum(a.building) - parseBuildingNum(b.building);
+    if (bd !== 0) return bd;
+    return parseRoomNum(a.roomNumber) - parseRoomNum(b.roomNumber);
+  });
 
   const productAgg = new Map<string, { productName: string; spec: string; quantity: number }>();
   for (const m of members) {

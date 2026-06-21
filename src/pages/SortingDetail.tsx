@@ -6,8 +6,10 @@ import { formatMoney, formatDate, formatDateShort, statusText } from '@/lib/form
 import type { SortingGroup, MemberSorting, OrderItem } from '../../shared/types';
 import {
   ArrowLeft, Printer, Check, CheckCheck, Boxes, Users, Package, Phone,
-  QrCode, RefreshCw, Download
+  QrCode, RefreshCw, Download, MapPin
 } from 'lucide-react';
+
+type PrintMode = 'sorting' | 'pickup';
 
 export default function SortingDetail() {
   const { id } = useParams();
@@ -17,7 +19,7 @@ export default function SortingDetail() {
   const [members, setMembers] = useState<MemberSorting[]>([]);
   const [productAgg, setProductAgg] = useState<any[]>([]);
   const [checked, setChecked] = useState<Set<string>>(new Set());
-  const printRef = useRef<HTMLDivElement>(null);
+  const [printMode, setPrintMode] = useState<PrintMode>('sorting');
 
   const load = async () => {
     if (!id) return;
@@ -68,14 +70,14 @@ export default function SortingDetail() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <div className="flex items-center justify-between no-print">
+      <div className="flex items-center justify-between no-print flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <button onClick={() => nav(-1)} className="w-10 h-10 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500">
             <ArrowLeft size={18} />
           </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-800">{group.productName}</h1>
-            <p className="text-sm text-gray-500 mt-1 flex items-center gap-4">
+            <p className="text-sm text-gray-500 mt-1 flex items-center gap-4 flex-wrap">
               <span>团期 <span className="font-mono text-primary-600">{group.groupId.toUpperCase()}</span></span>
               <span>截团 {formatDate(group.deadline)}</span>
               <span>到货 {formatDateShort(group.arriveDate)}</span>
@@ -83,7 +85,21 @@ export default function SortingDetail() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-xl">
+            <button
+              onClick={() => setPrintMode('sorting')}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${printMode === 'sorting' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              分拣签
+            </button>
+            <button
+              onClick={() => setPrintMode('pickup')}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${printMode === 'pickup' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              取货标签
+            </button>
+          </div>
           <button onClick={() => submitMark(false)} disabled={checked.size === 0} className="btn-secondary">
             <Check size={16} /> 标记已分拣 ({checked.size})
           </button>
@@ -91,7 +107,7 @@ export default function SortingDetail() {
             <CheckCheck size={16} /> 全部完成
           </button>
           <button onClick={doPrint} className="btn-primary">
-            <Printer size={16} /> 打印分拣标签
+            <Printer size={16} /> 打印{printMode === 'sorting' ? '分拣签' : '取货标签'}
           </button>
         </div>
       </div>
@@ -112,7 +128,7 @@ export default function SortingDetail() {
             </div>
             <div className="text-2xl font-bold text-fresh-600">{progress}%</div>
           </div>
-          <p className="text-xs text-gray-400">共 {totalMembers} 位团员，已分拣 {sortedCount} 位</p>
+          <p className="text-xs text-gray-400">共 {totalMembers} 位团员，已分拣 {sortedCount} 位 · 按楼栋/门牌号排序</p>
         </div>
 
         <div className="card p-6">
@@ -135,9 +151,10 @@ export default function SortingDetail() {
 
       {/* Member list (screen) */}
       <div className="card no-print">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-3">
           <h3 className="text-base font-semibold text-gray-800 flex items-center gap-2">
             <Users size={18} className="text-fresh-500" /> 团员分拣列表
+            <span className="text-xs font-normal text-gray-400">（按楼栋/门牌号排序）</span>
           </h3>
           <button className="btn-ghost text-xs"><Download size={14} /> 导出CSV</button>
         </div>
@@ -157,7 +174,12 @@ export default function SortingDetail() {
                   </div>
                   <div className="min-w-0 pr-8">
                     <div className="font-semibold text-gray-800">{m.memberName}</div>
-                    <div className="text-xs text-gray-400 flex items-center gap-1"><Phone size={11} /> {m.memberPhone}</div>
+                    <div className="text-xs text-gray-400 flex items-center gap-2 mt-0.5">
+                      <span className="flex items-center gap-1"><Phone size={11} /> {m.memberPhone}</span>
+                    </div>
+                    <div className="text-xs text-primary-600 flex items-center gap-1 mt-0.5 font-medium">
+                      <MapPin size={11} /> {m.building} {m.roomNumber}
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-1.5 mb-3">
@@ -181,22 +203,78 @@ export default function SortingDetail() {
         </div>
       </div>
 
-      {/* Print area */}
-      <div ref={printRef} className="print-only">
-        <div style={{ padding: 0 }}>
-          {members.map((m) => <PrintLabel key={m.orderId} m={m} productName={group.productName} />)}
+      {/* Print area - Sorting Labels */}
+      {printMode === 'sorting' && (
+        <div className="print-sorting-only">
+          <div style={{ padding: 0 }}>
+            <div style={{ fontSize: '16px', fontWeight: 'bold', textAlign: 'center', marginBottom: '20px', color: '#111' }}>
+              分拣签 · {group.productName} · 团期 {group.groupId.toUpperCase()}
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              {members.map((m) => <SortingLabel key={m.orderId} m={m} productName={group!.productName} />)}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Print area - Pickup Labels (existing) */}
+      {printMode === 'pickup' && (
+        <>
+          <div className="print-only">
+            <div style={{ padding: 0 }}>
+              {members.map((m) => <PickupLabel key={m.orderId} m={m} productName={group!.productName} />)}
+            </div>
+          </div>
+          <div className="print-area">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {members.map((m) => <PickupLabel key={m.orderId} m={m} productName={group!.productName} />)}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function SortingLabel({ m, productName }: { m: MemberSorting; productName: string }) {
+  return (
+    <div className="break-inside-avoid bg-white border-2 border-gray-800 rounded-xl p-4" style={{ pageBreakInside: 'avoid' }}>
+      <div className="flex items-center justify-between mb-3 pb-2 border-b-2 border-dashed border-gray-300">
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500 to-amber-500 flex items-center justify-center text-white font-bold">
+            {m.memberName[0]}
+          </div>
+          <div>
+            <div className="text-sm font-bold text-gray-900">{m.memberName}</div>
+            <div className="flex items-center gap-1 text-[11px] text-gray-500 mt-0.5">
+              <MapPin size={10} /> {m.building} {m.roomNumber}
+            </div>
+          </div>
         </div>
       </div>
-      <div className="print-area">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {members.map((m) => <PrintLabel key={m.orderId} m={m} productName={group.productName} />)}
+
+      <div className="space-y-1.5">
+        {m.items.map((it, j) => (
+          <div key={j} className="flex items-center justify-between">
+            <span className="text-sm text-gray-800 truncate pr-2 flex-1 leading-tight">{it.productName}</span>
+            <span className="text-lg font-black text-primary-600 shrink-0 leading-none ml-2">×{it.quantity}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 pt-2 border-t border-dashed border-gray-300 flex items-center justify-between">
+        <div className="text-[11px] text-gray-500">
+          {m.building} <span className="font-semibold text-gray-700">{m.roomNumber}</span>
+        </div>
+        <div className="text-[10px] text-gray-400">
+          {m.memberPhone}
         </div>
       </div>
     </div>
   );
 }
 
-function PrintLabel({ m, productName }: { m: MemberSorting; productName: string }) {
+function PickupLabel({ m, productName }: { m: MemberSorting; productName: string }) {
   return (
     <div className="print-label-page break-inside-avoid bg-white border-2 border-dashed border-gray-300 rounded-2xl p-5" style={{ pageBreakInside: 'avoid' }}>
       <div className="flex items-start justify-between mb-3 pb-3 border-b-2 border-dashed border-gray-200">
@@ -208,11 +286,17 @@ function PrintLabel({ m, productName }: { m: MemberSorting; productName: string 
           {m.memberName[0]}
         </div>
       </div>
-      <div className="mb-3">
+      <div className="mb-2">
         <div className="text-xs text-gray-400">团员姓名</div>
         <div className="text-xl font-bold text-gray-800">{m.memberName}</div>
       </div>
-      <div className="mb-3">
+      <div className="mb-2">
+        <div className="text-xs text-gray-400">楼栋门牌</div>
+        <div className="text-sm font-semibold text-primary-600 flex items-center gap-1">
+          <MapPin size={12} /> {m.building} {m.roomNumber}
+        </div>
+      </div>
+      <div className="mb-2">
         <div className="text-xs text-gray-400">联系电话</div>
         <div className="text-base font-semibold text-gray-700">{m.memberPhone}</div>
       </div>
