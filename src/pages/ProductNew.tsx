@@ -33,6 +33,7 @@ export default function ProductNew() {
   const [form, setForm] = useState({
     name: '',
     spec: '',
+    category: '水果',
     price: '',
     originPrice: '',
     image: SAMPLE_IMGS[0],
@@ -43,6 +44,8 @@ export default function ProductNew() {
   });
   const [loading, setLoading] = useState(false);
   const set = (k: keyof typeof form, v: any) => setForm(f => ({ ...f, [k]: v }));
+
+  const CATEGORIES = ['水果', '蔬菜', '肉禽蛋', '海鲜水产', '粮油调味', '乳品烘焙', '零食饮料', '日用百货', '其他'];
 
   const submit = async () => {
     if (!form.name.trim()) return showToast('error', '请输入团品名称');
@@ -62,6 +65,7 @@ export default function ProductNew() {
       await api.products.create({
         name: form.name,
         spec: form.spec,
+        category: form.category,
         price: Number(form.price),
         originPrice: form.originPrice ? Number(form.originPrice) : undefined,
         image: form.image,
@@ -103,6 +107,16 @@ export default function ProductNew() {
               <div className="md:col-span-2">
                 <label className="label"><Package size={14} className="inline mr-1.5 -mt-0.5" /> 规格描述 *</label>
                 <input className="input h-11" placeholder="例如：5斤/箱，约20-25颗，单果65mm+" value={form.spec} onChange={e => set('spec', e.target.value)} />
+              </div>
+              <div className="md:col-span-2">
+                <label className="label">商品品类</label>
+                <div className="flex flex-wrap gap-2">
+                  {CATEGORIES.map(c => (
+                    <button key={c} onClick={() => set('category', c)} className={`px-3.5 py-2 rounded-lg text-sm font-medium border transition ${form.category === c ? 'border-primary-500 bg-primary-50 text-primary-600' : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700'}`}>
+                      {c}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div>
                 <label className="label"><DollarSign size={14} className="inline mr-1.5 -mt-0.5 text-primary-500" /> 团购价 (元) *</label>

@@ -11,6 +11,7 @@ export interface Product {
   id: string;
   name: string;
   spec: string;
+  category: string;
   price: number;
   originPrice?: number;
   image: string;
@@ -147,6 +148,62 @@ export interface MemberStats {
   orderCount: number;
   quantity: number;
   amount: number;
+}
+
+export interface CategoryPreference {
+  category: string;
+  count: number;
+  amount: number;
+  percentage: number;
+}
+
+export interface MemberPurchaseDetail {
+  orderId: string;
+  orderNo: string;
+  items: OrderItem[];
+  totalAmount: number;
+  totalQuantity: number;
+  status: OrderStatus;
+  createdAt: string;
+}
+
+export interface MemberRepurchaseStats {
+  memberName: string;
+  memberPhone: string;
+  building: string;
+  roomNumber: string;
+  orderCount: number;
+  totalAmount: number;
+  totalQuantity: number;
+  avgOrderAmount: number;
+  firstOrderAt: string;
+  lastOrderAt: string;
+  repurchaseLevel: 'high' | 'medium' | 'low' | 'new';
+  activityScore: number;
+  categories: CategoryPreference[];
+  recentOrders: MemberPurchaseDetail[];
+  recommendedProducts: string[];
+}
+
+export interface RepurchaseSummary {
+  totalMembers: number;
+  highActivityMembers: number;
+  mediumActivityMembers: number;
+  lowActivityMembers: number;
+  newMembers: number;
+  repurchaseRate: number;
+  avgOrderCount: number;
+  avgOrderAmount: number;
+}
+
+export interface RecommendRecord {
+  id: string;
+  memberName: string;
+  memberPhone: string;
+  productIds: string[];
+  productNames: string[];
+  createdAt: string;
+  remark?: string;
 }
 
 export interface ApiResponse<T> {

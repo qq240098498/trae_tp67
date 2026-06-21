@@ -12,6 +12,7 @@ import Verification from "@/pages/Verification";
 import AftersaleList from "@/pages/AftersaleList";
 import AftersaleNew from "@/pages/AftersaleNew";
 import PickupReminder from "@/pages/PickupReminder";
+import MemberRepurchase from "@/pages/MemberRepurchase";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/products/new" element={<ProductNew />} />
           <Route path="/products/supply" element={<ProductSupply />} />
           <Route path="/orders" element={<OrderStats />} />
+          <Route path="/member-repurchase" element={<MemberRepurchase />} />
           <Route path="/sorting" element={<SortingList />} />
           <Route path="/sorting/:id" element={<SortingDetail />} />
           <Route path="/verification" element={<Verification />} />

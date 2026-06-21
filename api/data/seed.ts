@@ -23,16 +23,16 @@ const PRODUCT_IMAGES = [
 
 export function seedProducts(): Product[] {
   const arr: Product[] = [
-    { id: 'p1', name: '云南沃柑', spec: '5斤装/箱', price: 29.9, originPrice: 49.9, image: PRODUCT_IMAGES[0], deadline: daysFromNow(2, 20, 0), arriveDate: daysFromNow(4), source: 'custom', status: 'ongoing', stock: 200, sold: 86, createdAt: daysAgo(1) },
-    { id: 'p2', name: '山东烟台红富士苹果', spec: '8斤装 80mm+', price: 39.9, originPrice: 59.9, image: PRODUCT_IMAGES[1], deadline: daysFromNow(1, 22, 0), arriveDate: daysFromNow(3), source: 'custom', status: 'ongoing', stock: 150, sold: 112, createdAt: daysAgo(2) },
-    { id: 'p3', name: '海南金钻凤梨', spec: '2个装 约4斤', price: 35.8, originPrice: 58, image: PRODUCT_IMAGES[2], deadline: daysFromNow(3, 18, 0), arriveDate: daysFromNow(5), source: 'supply', status: 'ongoing', stock: 300, sold: 48, createdAt: daysAgo(1, 10) },
-    { id: 'p4', name: '内蒙古羔羊肉卷', spec: '500g/盒×2', price: 89.9, originPrice: 128, image: PRODUCT_IMAGES[3], deadline: daysAgo(1, 20), arriveDate: daysFromNow(1), source: 'custom', status: 'closed', stock: 100, sold: 64, createdAt: daysAgo(4) },
-    { id: 'p5', name: '东北五常大米', spec: '10斤装 新米', price: 59.9, originPrice: 89, image: PRODUCT_IMAGES[4], deadline: daysAgo(2, 20), arriveDate: daysAgo(0), source: 'supply', status: 'closed', stock: 200, sold: 138, createdAt: daysAgo(6) },
-    { id: 'p6', name: '湛江生蚝', spec: 'M号 5斤约30只', price: 68, originPrice: 98, image: PRODUCT_IMAGES[5], deadline: daysAgo(4, 20), arriveDate: daysAgo(2), source: 'custom', status: 'finished', stock: 80, sold: 52, createdAt: daysAgo(8) },
-    { id: 'p7', name: '四川不知火丑橘', spec: '5斤精品装', price: 36.8, originPrice: 58, image: PRODUCT_IMAGES[6], deadline: daysFromNow(4, 20), arriveDate: daysFromNow(6), source: 'supply', status: 'ongoing', stock: 250, sold: 35, createdAt: daysAgo(0, 9) },
-    { id: 'p8', name: '阳澄湖大闸蟹礼券', spec: '4对装 公4两母3两', price: 299, originPrice: 499, image: PRODUCT_IMAGES[7], deadline: daysAgo(6, 20), arriveDate: daysAgo(4), source: 'supply', status: 'finished', stock: 60, sold: 28, createdAt: daysAgo(12) },
-    { id: 'p9', name: '云南高山蓝莓', spec: '125g×4盒', price: 59.9, originPrice: 79.9, image: PRODUCT_IMAGES[8], deadline: daysFromNow(5, 20), arriveDate: daysFromNow(7), source: 'custom', status: 'ongoing', stock: 180, sold: 22, createdAt: daysAgo(0, 15) },
-    { id: 'p10', name: '广西砂糖橘', spec: '10斤装 皮薄多汁', price: 45.8, originPrice: 68, image: PRODUCT_IMAGES[9], deadline: daysAgo(8, 20), arriveDate: daysAgo(6), source: 'supply', status: 'finished', stock: 500, sold: 412, createdAt: daysAgo(15) },
+    { id: 'p1', name: '云南沃柑', spec: '5斤装/箱', category: '水果', price: 29.9, originPrice: 49.9, image: PRODUCT_IMAGES[0], deadline: daysFromNow(2, 20, 0), arriveDate: daysFromNow(4), source: 'custom', status: 'ongoing', stock: 200, sold: 86, createdAt: daysAgo(1) },
+    { id: 'p2', name: '山东烟台红富士苹果', spec: '8斤装 80mm+', category: '水果', price: 39.9, originPrice: 59.9, image: PRODUCT_IMAGES[1], deadline: daysFromNow(1, 22, 0), arriveDate: daysFromNow(3), source: 'custom', status: 'ongoing', stock: 150, sold: 112, createdAt: daysAgo(2) },
+    { id: 'p3', name: '海南金钻凤梨', spec: '2个装 约4斤', category: '水果', price: 35.8, originPrice: 58, image: PRODUCT_IMAGES[2], deadline: daysFromNow(3, 18, 0), arriveDate: daysFromNow(5), source: 'supply', status: 'ongoing', stock: 300, sold: 48, createdAt: daysAgo(1, 10) },
+    { id: 'p4', name: '内蒙古羔羊肉卷', spec: '500g/盒×2', category: '肉禽蛋', price: 89.9, originPrice: 128, image: PRODUCT_IMAGES[3], deadline: daysAgo(1, 20), arriveDate: daysFromNow(1), source: 'custom', status: 'closed', stock: 100, sold: 64, createdAt: daysAgo(4) },
+    { id: 'p5', name: '东北五常大米', spec: '10斤装 新米', category: '粮油调味', price: 59.9, originPrice: 89, image: PRODUCT_IMAGES[4], deadline: daysAgo(2, 20), arriveDate: daysAgo(0), source: 'supply', status: 'closed', stock: 200, sold: 138, createdAt: daysAgo(6) },
+    { id: 'p6', name: '湛江生蚝', spec: 'M号 5斤约30只', category: '海鲜水产', price: 68, originPrice: 98, image: PRODUCT_IMAGES[5], deadline: daysAgo(4, 20), arriveDate: daysAgo(2), source: 'custom', status: 'finished', stock: 80, sold: 52, createdAt: daysAgo(8) },
+    { id: 'p7', name: '四川不知火丑橘', spec: '5斤精品装', category: '水果', price: 36.8, originPrice: 58, image: PRODUCT_IMAGES[6], deadline: daysFromNow(4, 20), arriveDate: daysFromNow(6), source: 'supply', status: 'ongoing', stock: 250, sold: 35, createdAt: daysAgo(0, 9) },
+    { id: 'p8', name: '阳澄湖大闸蟹礼券', spec: '4对装 公4两母3两', category: '海鲜水产', price: 299, originPrice: 499, image: PRODUCT_IMAGES[7], deadline: daysAgo(6, 20), arriveDate: daysAgo(4), source: 'supply', status: 'finished', stock: 60, sold: 28, createdAt: daysAgo(12) },
+    { id: 'p9', name: '云南高山蓝莓', spec: '125g×4盒', category: '水果', price: 59.9, originPrice: 79.9, image: PRODUCT_IMAGES[8], deadline: daysFromNow(5, 20), arriveDate: daysFromNow(7), source: 'custom', status: 'ongoing', stock: 180, sold: 22, createdAt: daysAgo(0, 15) },
+    { id: 'p10', name: '广西砂糖橘', spec: '10斤装 皮薄多汁', category: '水果', price: 45.8, originPrice: 68, image: PRODUCT_IMAGES[9], deadline: daysAgo(8, 20), arriveDate: daysAgo(6), source: 'supply', status: 'finished', stock: 500, sold: 412, createdAt: daysAgo(15) },
   ];
   return arr;
 }
@@ -69,6 +69,11 @@ const GROUPS = [
   { id: 'g3', productId: 'p6', status: 'done' as const, closedAt: daysAgo(4, 20), arriveAt: daysAgo(2) },
   { id: 'g4', productId: 'p10', status: 'done' as const, closedAt: daysAgo(8, 20), arriveAt: daysAgo(6) },
   { id: 'g5', productId: 'p8', status: 'done' as const, closedAt: daysAgo(6, 20), arriveAt: daysAgo(4) },
+  { id: 'g6', productId: 'p1', status: 'done' as const, closedAt: daysAgo(10, 20), arriveAt: daysAgo(8) },
+  { id: 'g7', productId: 'p2', status: 'done' as const, closedAt: daysAgo(14, 20), arriveAt: daysAgo(12) },
+  { id: 'g8', productId: 'p9', status: 'done' as const, closedAt: daysAgo(18, 20), arriveAt: daysAgo(16) },
+  { id: 'g9', productId: 'p7', status: 'done' as const, closedAt: daysAgo(22, 20), arriveAt: daysAgo(20) },
+  { id: 'g10', productId: 'p3', status: 'done' as const, closedAt: daysAgo(26, 20), arriveAt: daysAgo(24) },
 ];
 
 export function seedOrders(): Order[] {
@@ -76,9 +81,11 @@ export function seedOrders(): Order[] {
   const products = seedProducts();
   const pmap = Object.fromEntries(products.map(p => [p.id, p]));
 
+  const memberOrderCounts = [5, 4, 6, 3, 5, 2, 4, 1, 6, 3, 2, 4, 5, 1, 3];
+
   let idx = 1;
-  const add = (groupId: string, productIds: string[], status: Order['status'], createdAt: string, options?: { reminderLevel?: 0|1|2; disposeType?: 'normal'|'stored'|'returned'; lastRemindedAt?: string; disposedAt?: string }) => {
-    const member = pickMember();
+  const add = (memberIdx: number, groupId: string, productIds: string[], status: Order['status'], createdAt: string, options?: { reminderLevel?: 0|1|2; disposeType?: 'normal'|'stored'|'returned'; lastRemindedAt?: string; disposedAt?: string }) => {
+    const member = MEMBERS[memberIdx % MEMBERS.length];
     const items: OrderItem[] = productIds.map(pid => {
       const p = pmap[pid]!;
       const q = rand(1, 3);
@@ -112,70 +119,35 @@ export function seedOrders(): Order[] {
     idx++;
   };
 
-  // Group g1 (p4 羊肉卷) - pending, 14 orders
-  for (let i = 0; i < 14; i++) {
-    const extras = Math.random() > 0.7 && products[0] ? [products[0].id] : [];
-    add('g1', ['p4', ...extras], 'pending', GROUPS[0].closedAt);
-  }
-  // Group g2 (p5 五常大米) - sorting, 16 orders (part picked)
-  for (let i = 0; i < 16; i++) {
-    const s: Order['status'] = i < 6 ? 'picked' : 'sorted';
-    add('g2', ['p5'], s, GROUPS[1].closedAt);
-  }
-  // Group g3 (p6 生蚝) - done, 12 orders (8 picked, 4 overdue sorted)
-  for (let i = 0; i < 12; i++) {
-    if (i < 8) {
-      add('g3', ['p6'], 'picked', GROUPS[2].closedAt);
-    } else if (i < 10) {
-      add('g3', ['p6'], 'sorted', GROUPS[2].closedAt, { 
-        reminderLevel: 2, 
-        lastRemindedAt: daysAgo(0, 10),
-        disposeType: 'normal'
-      });
-    } else {
-      add('g3', ['p6'], 'sorted', GROUPS[2].closedAt, { 
-        reminderLevel: 1, 
-        lastRemindedAt: daysAgo(1, 14),
-        disposeType: 'normal'
-      });
-    }
-  }
-  // Group g4 (p10 砂糖橘) - done, 20 orders (15 picked, 3 stored, 2 returned)
-  for (let i = 0; i < 20; i++) {
-    if (i < 15) {
-      add('g4', ['p10'], 'picked', GROUPS[3].closedAt);
-    } else if (i < 18) {
-      add('g4', ['p10'], 'sorted', GROUPS[3].closedAt, { 
-        reminderLevel: 2, 
-        lastRemindedAt: daysAgo(3, 9),
-        disposeType: 'stored',
-        disposedAt: daysAgo(2, 11)
-      });
-    } else {
-      add('g4', ['p10'], 'sorted', GROUPS[3].closedAt, { 
-        reminderLevel: 2, 
-        lastRemindedAt: daysAgo(4, 10),
-        disposeType: 'returned',
-        disposedAt: daysAgo(3, 15)
-      });
-    }
-  }
-  // Group g5 (p8 大闸蟹) - done, 8 orders (5 picked, 3 overdue)
-  for (let i = 0; i < 8; i++) {
-    if (i < 5) {
-      add('g5', ['p8'], 'picked', GROUPS[4].closedAt);
-    } else if (i < 7) {
-      add('g5', ['p8'], 'sorted', GROUPS[4].closedAt, { 
-        reminderLevel: 2, 
-        lastRemindedAt: daysAgo(2, 8),
-        disposeType: 'normal'
-      });
-    } else {
-      add('g5', ['p8'], 'sorted', GROUPS[4].closedAt, { 
-        reminderLevel: 1, 
-        lastRemindedAt: daysAgo(1, 16),
-        disposeType: 'normal'
-      });
+  for (let m = 0; m < MEMBERS.length; m++) {
+    const count = memberOrderCounts[m];
+    const availableGroups = GROUPS.slice().reverse();
+    
+    for (let i = 0; i < count && i < availableGroups.length; i++) {
+      const g = availableGroups[i];
+      let status: Order['status'] = 'picked';
+      let options: any = {};
+      
+      if (g.status === 'pending') {
+        status = i === 0 ? 'pending' : 'picked';
+      } else if (g.status === 'sorting') {
+        status = i === 0 ? 'sorted' : 'picked';
+        if (status === 'sorted' && i < 2) {
+          options = { reminderLevel: i + 1, lastRemindedAt: daysAgo(i, 10) };
+        }
+      }
+      
+      const extras: string[] = [];
+      if (Math.random() > 0.6) {
+        const otherProducts = products.filter(p => p.id !== g.productId);
+        const extraCount = rand(1, 2);
+        for (let j = 0; j < extraCount && j < otherProducts.length; j++) {
+          const extraP = otherProducts[rand(0, otherProducts.length - 1)];
+          if (!extras.includes(extraP.id)) extras.push(extraP.id);
+        }
+      }
+      
+      add(m, g.id, [g.productId, ...extras.slice(0, 1)], status, g.closedAt, Object.keys(options).length > 0 ? options : undefined);
     }
   }
 

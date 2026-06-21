@@ -29,6 +29,7 @@ router.post('/', (req: Request, res: Response) => {
     id: store.genId('p'),
     name: body.name,
     spec: body.spec,
+    category: body.category || '其他',
     price: Number(body.price),
     originPrice: body.originPrice ? Number(body.originPrice) : undefined,
     image: body.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop',

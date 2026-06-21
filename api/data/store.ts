@@ -1,4 +1,4 @@
-import type { Product, Order, SortingGroup, Aftersale, VerificationRecord, PickupReminder } from '../../shared/types';
+import type { Product, Order, SortingGroup, Aftersale, VerificationRecord, PickupReminder, RecommendRecord } from '../../shared/types';
 import { seedProducts, seedOrders, seedSortingGroups, seedAftersales, seedPickupReminders } from './seed';
 
 class MemoryStore {
@@ -8,6 +8,7 @@ class MemoryStore {
   aftersales: Aftersale[] = [];
   verifications: VerificationRecord[] = [];
   pickupReminders: PickupReminder[] = [];
+  recommendRecords: RecommendRecord[] = [];
 
   constructor() {
     this.init();
@@ -29,6 +30,7 @@ class MemoryStore {
         verifiedAt: o.pickedAt!,
       }));
     this.pickupReminders = seedPickupReminders(this.orders);
+    this.recommendRecords = [];
   }
 
   genId(prefix: string) {

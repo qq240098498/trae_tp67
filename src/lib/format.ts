@@ -70,3 +70,10 @@ export const sourceText: Record<string, { text: string; className: string }> = {
   custom: { text: '自定义', className: 'bg-primary-50 text-primary-600 border-primary-200' },
   supply: { text: '供应链', className: 'bg-fresh-50 text-fresh-600 border-fresh-200' },
 };
+
+export const repurchaseLevelText: Record<string, { text: string; className: string }> = {
+  high: { text: '高活跃', className: 'bg-fresh-50 text-fresh-600 border-fresh-200' },
+  medium: { text: '中活跃', className: 'bg-primary-50 text-primary-600 border-primary-200' },
+  low: { text: '低活跃', className: 'bg-amber-50 text-amber-600 border-amber-200' },
+  new: { text: '新团员', className: 'bg-gray-100 text-gray-600 border-gray-200' },
+};

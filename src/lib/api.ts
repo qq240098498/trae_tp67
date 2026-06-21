@@ -2,7 +2,8 @@ import axios from 'axios';
 import type {
   Product, Order, SortingGroup, MemberSorting, Aftersale,
   DashboardStats, ProductStats, MemberStats, VerificationRecord,
-  PickupReminder, OverduePickupStats
+  PickupReminder, OverduePickupStats, MemberRepurchaseStats,
+  RepurchaseSummary, RecommendRecord
 } from '../../shared/types';
 
 const http = axios.create({ baseURL: '/api', timeout: 10000 });
@@ -72,6 +73,18 @@ export const api = {
       http.post<any, { code: number; data: Order; message?: string }>(`/pickup-reminder/dispose/${orderId}`, { type, remark }).then(r => r),
     reminders: (params?: { orderId?: string }) =>
       http.get<any, { code: number; data: PickupReminder[] }>('/pickup-reminder/reminders', { params }).then(r => r.data),
+  },
+  memberRepurchase: {
+    stats: () => http.get<any, {
+      code: number; data: {
+        summary: RepurchaseSummary;
+        members: MemberRepurchaseStats[];
+      }
+    }>('/member-repurchase/stats').then(r => r.data),
+    products: () => http.get<any, { code: number; data: Product[] }>('/member-repurchase/products').then(r => r.data),
+    recommendRecords: () => http.get<any, { code: number; data: RecommendRecord[] }>('/member-repurchase/recommend-records').then(r => r.data),
+    recommend: (data: { memberNames: string[]; memberPhones: string[]; productIds: string[]; remark?: string }) =>
+      http.post<any, { code: number; data: { success: number; records: RecommendRecord[] }; message?: string }>('/member-repurchase/recommend', data).then(r => r),
   },
 };
 
