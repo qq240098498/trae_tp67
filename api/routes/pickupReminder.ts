@@ -16,6 +16,8 @@ const getHoursSinceArrive = (order: Order): number => {
   return diff / (1000 * 60 * 60);
 };
 
+const REMIND_COOLDOWN_MINUTES = 5;
+
 router.get('/stats', (req: Request, res: Response) => {
   const orders = store.orders;
   const sortedOrders = orders.filter(o => o.status === 'sorted');
@@ -117,6 +119,17 @@ router.post('/remind/:orderId', (req: Request, res: Response) => {
     return res.json({ code: 0, data: order, message: '已达到最大提醒次数' });
   }
   
+  if (order.lastRemindedAt) {
+    const diffMinutes = (Date.now() - new Date(order.lastRemindedAt).getTime()) / (1000 * 60);
+    if (diffMinutes < REMIND_COOLDOWN_MINUTES) {
+      const remain = Math.ceil(REMIND_COOLDOWN_MINUTES - diffMinutes);
+      return res.status(400).json({ 
+        code: 1, 
+        message: `提醒过于频繁，请${remain}分钟后再试` 
+      });
+    }
+  }
+  
   const now = new Date().toISOString();
   order.reminderLevel = nextLevel;
   order.lastRemindedAt = now;
@@ -152,6 +165,7 @@ router.post('/remind/batch', (req: Request, res: Response) => {
   
   let success = 0;
   let failed = 0;
+  let cooldown = 0;
   
   for (const oid of orderIds) {
     const order = store.orders.find(o => o.id === oid);
@@ -162,6 +176,15 @@ router.post('/remind/batch', (req: Request, res: Response) => {
     if (order.reminderLevel >= 2) {
       failed++;
       continue;
+    }
+    
+    if (order.lastRemindedAt) {
+      const diffMinutes = (Date.now() - new Date(order.lastRemindedAt).getTime()) / (1000 * 60);
+      if (diffMinutes < REMIND_COOLDOWN_MINUTES) {
+        cooldown++;
+        failed++;
+        continue;
+      }
     }
     
     const nextLevel = (order.reminderLevel + 1) as 0 | 1 | 2;
@@ -186,10 +209,14 @@ router.post('/remind/batch', (req: Request, res: Response) => {
     success++;
   }
   
+  const msg = cooldown > 0 
+    ? `批量提醒完成：成功${success}条，失败${failed}条（其中${cooldown}条处于冷却中）`
+    : `批量提醒完成：成功${success}条，失败${failed}条`;
+  
   res.json({
     code: 0,
-    data: { success, failed },
-    message: `批量提醒完成：成功${success}条，失败${failed}条`,
+    data: { success, failed, cooldown },
+    message: msg,
   });
 });
 

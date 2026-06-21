@@ -9,6 +9,8 @@ import {
   X, MessageSquare, History
 } from 'lucide-react';
 
+const REMIND_COOLDOWN_MINUTES = 5;
+
 type TabType = 'overdue' | 'stored' | 'returned';
 
 export default function PickupReminder() {
@@ -23,6 +25,12 @@ export default function PickupReminder() {
   const [disposeRemark, setDisposeRemark] = useState('');
   const [reminderModal, setReminderModal] = useState<any>(null);
   const [reminderList, setReminderList] = useState<PickupReminderType[]>([]);
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const loadStats = async () => {
     try {
@@ -118,6 +126,24 @@ export default function PickupReminder() {
       setReminderList(list);
       setReminderModal(order);
     } catch (e: any) { showToast('error', e); }
+  };
+
+  const getCooldownSeconds = (order: any): number => {
+    if (!order.lastRemindedAt) return 0;
+    const diff = now - new Date(order.lastRemindedAt).getTime();
+    const remain = REMIND_COOLDOWN_MINUTES * 60 * 1000 - diff;
+    return remain > 0 ? Math.ceil(remain / 1000) : 0;
+  };
+
+  const formatCooldown = (seconds: number): string => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}分${s.toString().padStart(2, '0')}秒`;
+  };
+
+  const canRemind = (order: any): boolean => {
+    if (order.reminderLevel >= 2) return false;
+    return getCooldownSeconds(order) === 0;
   };
 
   const TABS = [
@@ -231,8 +257,13 @@ export default function PickupReminder() {
               <>
                 <button
                   onClick={handleBatchRemind}
-                  disabled={selected.size === 0}
+                  disabled={selected.size === 0 || orders.filter(o => selected.has(o.id)).some(o => !canRemind(o))}
                   className="btn-primary"
+                  title={
+                    orders.some(o => selected.has(o.id) && !canRemind(o) && o.reminderLevel < 2)
+                      ? '部分选中订单处于冷却中或已达最大提醒次数'
+                      : ''
+                  }
                 >
                   <Bell size={16} /> 批量提醒 ({selected.size})
                 </button>
@@ -370,13 +401,20 @@ export default function PickupReminder() {
                         </button>
                         {tab === 'overdue' && (
                           <>
-                            <button
-                              onClick={() => handleRemind(order.id)}
-                              disabled={order.reminderLevel >= 2}
-                              className="btn-secondary text-xs"
-                            >
-                              <Bell size={14} /> 发送提醒
-                            </button>
+                            {order.reminderLevel < 2 && getCooldownSeconds(order) > 0 ? (
+                              <span className="text-xs text-gray-400 flex items-center gap-1 px-2">
+                                <Clock size={12} className="animate-pulse" />
+                                冷却中 {formatCooldown(getCooldownSeconds(order))}
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => handleRemind(order.id)}
+                                disabled={order.reminderLevel >= 2}
+                                className="btn-secondary text-xs"
+                              >
+                                <Bell size={14} /> 发送提醒
+                              </button>
+                            )}
                             <button
                               onClick={() => openDisposeModal(order, 'stored')}
                               className="btn-secondary text-xs"
