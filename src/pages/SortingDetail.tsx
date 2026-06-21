@@ -41,7 +41,11 @@ export default function SortingDetail() {
   const markAll = () => setChecked(new Set(members.map(m => m.orderId)));
 
   const submitMark = async (all = false) => {
-    if (!id) return;
+    if (!id || !group) return;
+    if (group.status === 'done') {
+      showToast('info', '该分拣单已完成，无需重复操作');
+      return;
+    }
     try {
       const orderIds = all ? members.map(m => m.orderId) : Array.from(checked);
       const r = await api.sorting.mark(id, { orderIds, all });
@@ -100,11 +104,19 @@ export default function SortingDetail() {
               取货标签
             </button>
           </div>
-          <button onClick={() => submitMark(false)} disabled={checked.size === 0} className="btn-secondary">
+          <button
+            onClick={() => submitMark(false)}
+            disabled={group.status === 'done' || checked.size === 0}
+            className="btn-secondary"
+          >
             <Check size={16} /> 标记已分拣 ({checked.size})
           </button>
-          <button onClick={() => submitMark(true)} className="btn-success">
-            <CheckCheck size={16} /> 全部完成
+          <button
+            onClick={() => submitMark(true)}
+            disabled={group.status === 'done'}
+            className="btn-success"
+          >
+            <CheckCheck size={16} /> {group.status === 'done' ? '已完成' : '全部完成'}
           </button>
           <button onClick={doPrint} className="btn-primary">
             <Printer size={16} /> 打印{printMode === 'sorting' ? '分拣签' : '取货标签'}
